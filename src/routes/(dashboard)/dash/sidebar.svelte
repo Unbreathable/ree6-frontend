@@ -1,33 +1,90 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
+  import { onMount } from "svelte";
     import { slide } from "svelte/transition";
 
-    let selected = 0;
     let expanded = false;
+
+    let server = "";
+
+    onMount(() => {
+        server = $page.params["serverId"] ?? "Select a server..";
+        console.log($page.url.pathname)
+    })
+
+    let elements = [
+        {
+            icon: "insights",
+            name: "Overview",
+            link: "/stats",
+        },
+        {
+            icon: "dynamic_feed",
+            name: "Logging",
+            link: "/logs",
+        },
+        {
+            icon: "chat",
+            name: "Moderation",
+            link: "/moderation",
+        },
+        {
+            icon: "movie",
+            name: "Social media",
+            link: "/media",
+        },
+        {
+            icon: "leaderboard",
+            name: "Leaderboards",
+            link: "/leaderboards",
+        },
+    ];
+
+    let servers = [
+         {
+            id: 1,
+            name: "REE6 Community",
+        },
+        {
+            id: 2,
+            name: "Azura",
+        },
+        {
+            id: 3,
+            name: "NoRules",
+        }
+    ]
+
+    function selectServer(serverId: number) {
+        goto("/dash/" + serverId + "/stats")
+        server = "" + serverId;
+        expanded = false;
+    }
+
 </script>
 
 <div class="sidebar">
     <div class="server-selector">
         <span class="material-icons icon-large icon-primary middle">face</span>
         <div class="server-current">
-            <div class="up">
+            <div class="up" on:click={() => {
+                expanded = !expanded;
+            }} on:keydown>
                 <div class="title">
-                    <span class="material-icons icon-medium icon-primary">dns</span>
-                    <p class="server-current-name text-medium">Server 123</p>
+                    <span class="material-icons icon-medium icon-primary">{server == "Select a server.." ? "ads_click" : "dns"}</span>
+                    <p class="server-current-name text-medium">{server}</p>
                 </div>
     
-                <span class="material-icons icon-medium expand {expanded ? "expand-rotated" : ""}" on:click={() => {
-                    expanded = !expanded;
-                }} on:keydown>expand_more</span>
+                <span class="material-icons icon-medium expand {expanded ? "expand-rotated" : ""}">expand_more</span>
             </div>
 
             {#if expanded}
             <div in:slide out:slide class="list">
-                {#each [1, 2, 3, 4, 5] as server}
-                <div class="server" on:click={() => {
-                    expanded = false;
-                }} on:keydown>
+                {#each servers as server}
+                <div class="server" on:click={() => selectServer(server.id)} on:keydown>
                     <span class="material-icons icon-medium icon-primary">dns</span>
-                    <p class="server-name text-medium">Server {server}</p>
+                    <p class="server-name text-medium">{server.name}</p>
                 </div>
                 {/each}
             </div>
@@ -36,30 +93,15 @@
     </div>
 
     <div class="element-list">
-        <div class="element element-selected">
-            <span class="material-icons icon-medium icon-primary">insights</span>
-            <p class="text-medium">Server statistics</p>
-        </div>
 
-        <div class="element">
-            <span class="material-icons icon-medium icon-primary">dynamic_feed</span>
-            <p class="text-medium">Logging</p>
+        {#each elements as element}
+        <div class="element {$page.url.pathname.startsWith("/dash/" + server + element.link) ? "element-selected" : ""}" on:click={() => {
+            goto("/dash/" + server + element.link)
+        }} on:keydown>
+            <span class="material-icons icon-medium icon-primary">{element.icon}</span>
+            <p class="text-medium">{element.name}</p>
         </div>
-
-        <div class="element">
-            <span class="material-icons icon-medium icon-primary">chat</span>
-            <p class="text-medium">Moderation</p>
-        </div>
-
-        <div class="element">
-            <span class="material-icons icon-medium icon-primary">public</span>
-            <p class="text-medium">Server details</p>
-        </div>
-
-        <div class="element">
-            <span class="material-icons icon-medium icon-primary">leaderboard</span>
-            <p class="text-medium">Leaderboards</p>
-        </div>
+        {/each}
     </div>
 </div>
 
@@ -92,6 +134,7 @@
         background-color: var(--outer-space);
 
         .up {
+            cursor: pointer;
             display: flex;
             width: 100%;
             padding: 0.1rem;
