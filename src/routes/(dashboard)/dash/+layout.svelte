@@ -13,6 +13,8 @@
 
 <style lang="scss">
     .body {
+        padding: 0;
+        margin: 0;
         display: flex;
         height: 100vh;
         width: 100vw;
@@ -21,7 +23,7 @@
 
     .content {
         width: 100%;
-        height: 100%;
+        height: calc(100% - 4rem);
         padding: 2rem;
     }
 </style>

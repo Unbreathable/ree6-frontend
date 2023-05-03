@@ -1,65 +1,92 @@
-<div class="server-profile">
-    <span class="material-icons icon-primary">face</span>
-    <h1>REE6 Community</h1>
-</div>
+<script lang="ts">
+    import { goto } from "$app/navigation";
+    import { page } from "$app/stores";
 
-<div class="stats">
-    <div class="stat">
-        <span class="material-icons icon-primary icon-medium">group</span>
-        <p class="text-medium">300 server members</p>
-    </div>
+    let actions = [
+        {
+            icon: 'dynamic_feed',
+            title: 'Logging',
+            description: 'Logs, Logging settings',
+            link: '/logs'
+        },
+        {
+            icon: 'chat',
+            title: 'Moderation',
+            description: 'Moderation features, Command prefix',
+            link: '/moderation'
+        },
+        {
+            icon: 'movie',
+            title: 'Social media',
+            description: 'Social media alerts, Welcome messages',
+            link: '/media'
+        },
+        {
+            icon: 'leaderboard',
+            title: 'Leaderboard',
+            description: 'Chat leaderboard, Voice leaderboard',
+            link: '/leaderboard'
+        }
+    ]
 
-    <div class="stat">
-        <span class="material-icons icon-primary icon-medium">key</span>
-        <p class="text-medium">100 server invites</p>
-    </div>
+</script>
 
-    {#each [1,2] as command}
-    <div class="stat">
-        <span class="material-icons icon-primary icon-medium">keyboard_command_key</span>
-        <p class="text-medium">2255 /help usages</p>
+<div class="middle">
+    <div class="server-profile">
+        <span class="material-icons icon-primary">face</span>
+        <h1>REE6 Community</h1>
     </div>
-    {/each}
+    
+    <div class="stats">
+        <div class="stat">
+            <span class="material-icons icon-primary icon-medium">group</span>
+            <p class="text-medium">300 server members</p>
+        </div>
+    
+        <div class="stat">
+            <span class="material-icons icon-primary icon-medium">key</span>
+            <p class="text-medium">100 server invites</p>
+        </div>
+    
+        {#each [1,2] as command}
+        <div class="stat">
+            <span class="material-icons icon-primary icon-medium">keyboard_command_key</span>
+            <p class="text-medium">2255 /help usages</p>
+        </div>
+        {/each}
+    </div>
 </div>
 
 <h2 class="headline">Bot settings</h2>
 
 <div class="actions">
-    <div class="action">
-        <span class="material-icons icon-primary icon-large">dynamic_feed</span>
-        <div class="content">
-            <h1 class="text-medium">Logging</h1>
-            <p class="text-bg">Logs, Logging settings</p>
-        </div>
-    </div>
 
-    <div class="action">
-        <span class="material-icons icon-primary icon-large">chat</span>
-        <div class="content">
-            <h1 class="text-medium">Moderation</h1>
-            <p class="text-bg">Moderation features, Command prefix</p>
-        </div>
-    </div>
+    {#each actions as action}
+    <div class="action" on:click={() => {
 
-
-    <div class="action">
-        <span class="material-icons icon-primary icon-large">movie</span>
+        // Go to link
+        goto("/dash/" + $page.params["serverId"] + action.link)
+    }} on:keydown={() => {}}>
         <div class="content">
-            <h1 class="text-medium">Social media</h1>
-            <p class="text-bg">Social media alerts, Welcome messages</p>
+            <span class="material-icons icon-primary icon-large">{action.icon}</span>
+            <div class="text">
+                <h1 class="text-medium">{action.title}</h1>
+                <p class="text-bg">{action.description}</p>
+            </div>
         </div>
+        <span class="material-icons icon-large">arrow_forward_ios</span>
     </div>
-
-    <div class="action">
-        <span class="material-icons icon-primary icon-large">leaderboard</span>
-        <div class="content">
-            <h1 class="text-medium">Leaderboard</h1>
-            <p class="text-bg">Chat leaderboard, Voice leaderboard</p>
-        </div>
-    </div>
+    {/each}
 </div>
 
 <style lang="scss">
+
+    .middle {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        height: 40%;
+    }
 
     .server-profile {
         display: flex;
@@ -98,24 +125,43 @@
         }
     }
 
+    span {
+        user-select: none;
+    }
+
     .actions {
         display: flex;
         gap: 1.3rem;
         flex-wrap: wrap;
         
         .action {
+            user-select: none;
             display: flex;
+            cursor: pointer;
             gap: 0.7rem;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            width: calc(50% - 2.65rem);
             padding: 1rem;
             border-radius: 1rem;
+            transition: 250ms all ease;
             background-color: var(--outer-space);
             
             .content {
                 display: flex;
-                flex-direction: column;
-                gap: 0.3rem;
+                gap: 0.7rem;
+                align-items: center;
+
+                .text {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.3rem;
+                }
+            }
+
+            &:hover {
+                box-shadow: 0px 0.25rem 0px 0px var(--eerie-black);
+                transform: translateY(-0.25rem);
             }
         }
     }
