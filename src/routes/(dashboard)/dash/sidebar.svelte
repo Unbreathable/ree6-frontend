@@ -21,11 +21,11 @@
         },
         {
             icon: "dynamic_feed",
-            name: "Logging",
-            link: "/logs",
+            name: "Events & logging",
+            link: "/events",
         },
         {
-            icon: "chat",
+            icon: "gavel",
             name: "Moderation",
             link: "/moderation",
         },
@@ -66,7 +66,9 @@
 
 <div class="sidebar">
     <div class="server-selector">
-        <span class="material-icons icon-large icon-primary middle">face</span>
+        <span on:click={() => {
+            goto("/dash")
+        }} on:keydown class="material-icons icon-large icon-primary middle clickable">face</span>
         <div class="server-current">
             <div class="up" on:click={() => {
                 expanded = !expanded;
@@ -92,6 +94,7 @@
         </div>
     </div>
 
+    {#if $page.url.pathname.startsWith("/dash/" + server)}
     <div class="element-list">
 
         {#each elements as element}
@@ -103,6 +106,7 @@
         </div>
         {/each}
     </div>
+    {/if}
 </div>
 
 <style lang="scss">

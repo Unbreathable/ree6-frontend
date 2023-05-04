@@ -5,14 +5,14 @@
     let actions = [
         {
             icon: 'dynamic_feed',
-            title: 'Logging',
-            description: 'Logs, Logging settings',
-            link: '/logs'
+            title: 'Events & logging',
+            description: 'Logging settings, auto roles',
+            link: '/events'
         },
         {
-            icon: 'chat',
+            icon: 'gavel',
             title: 'Moderation',
-            description: 'Moderation features, Command prefix',
+            description: 'Moderation features, Enabled commands',
             link: '/moderation'
         },
         {
