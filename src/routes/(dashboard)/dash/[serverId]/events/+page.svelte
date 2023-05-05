@@ -1,4 +1,6 @@
 <script lang="ts">
+    import ChannelPicker from "$lib/components/channelPicker.svelte";
+
     
     let loggingFeatures: any = {
         'messageDelete': true,
@@ -15,6 +17,9 @@
         'messageDeleteBulk': false,
     }
 
+    let channelPicker = false;
+    let pickerMessage = ""
+
     let roles = ["Guest"]
 
     function enableAll() {
@@ -25,7 +30,16 @@
         Object.keys(loggingFeatures).forEach(feature => loggingFeatures[feature] = false)
     }
 
+    function selectChannel(message: string) {
+        channelPicker = true
+        pickerMessage = message;
+    }
+
 </script>
+
+{#if channelPicker}
+<ChannelPicker message={pickerMessage}/>
+{/if}
 
 <h1 class="headline-top">Logging</h1>
 
@@ -38,7 +52,9 @@
             </div>
             <p class="text-bg">Select the channel for all log messages.</p>
         </div>
-        <span class="material-icons icon-large clickable">edit</span>
+        <span on:click={() => {
+            selectChannel("Select a channel for logging messages.")
+        }} on:keydown class="material-icons icon-large clickable">edit</span>
     </div>
 </div>
 
