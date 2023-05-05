@@ -2,7 +2,6 @@
   
   </script>
   <div class="body">
-  
       <div class="content">
           <slot />
       </div>
@@ -16,11 +15,9 @@
           height: 100vh;
           width: 100vw;
           background-color: var(--onyx);
+          display: flex;
+          align-items: center;
+          justify-content: center;
       }
-  
-      .content {
-          width: 100%;
-          height: calc(100% - 4rem);
-          padding: 2rem;
-      }
+
   </style>
