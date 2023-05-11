@@ -1,31 +1,20 @@
 <script lang="ts">
+    import { servers, serversLoading } from "$lib/scripts/servers";
 
-    let servers = [
-        {
-            id: 1,
-            name: "Server von Unbreathable",
-            setup: false
-        },
-        {
-            id: 2,
-            name: "Azura",
-            setup: true
-        },
-        {
-            id: 3,
-            name: "NoRules",
-            setup: false
-        }
-    ]
+
+    
 
 </script>
 
 <h1 class="headline-top">Servers</h1>
 
 <div class="servers">
-    {#each servers as server}
+
+    {#if !$serversLoading}
+    
+    {#each Array.from(servers.values()) as server}
     <div class="server">
-        <span class="material-icons icon-replacer icon-primary">face</span>
+        <img src="{server.icon}" class="material-icons icon-replacer icon-primary" alt="hi">
         <h3>{server.name}</h3>
 
         {#if server.setup}
@@ -45,13 +34,17 @@
         {/if}
     </div>
     {/each}
+
+    {/if}
 </div>
 
 <style lang="scss">
     @import '$lib/default.scss';    
 
     .icon-replacer {
-        font-size: 8rem;
+        aspect-ratio: 1/1;
+        width: 100px;
+        border-radius: 10rem;
     }
 
     .servers {

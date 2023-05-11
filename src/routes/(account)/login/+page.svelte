@@ -1,12 +1,43 @@
 <script lang="ts">
     import { page } from "$app/stores";
     import { onMount } from "svelte";
+    import { BASE_PATH } from "$lib/scripts/constants";
+    import { goto } from "$app/navigation";
 
     let loading = true;
+    let message = '';
     let correct = false;
 
-    onMount(() => {
-        correct = $page.url.searchParams.has("token");
+    onMount(async () => {
+        correct = $page.url.searchParams.has("code") && $page.url.searchParams.has("state");
+        if(!correct) return;
+
+        const code = $page.url.searchParams.get("code");
+        const state = $page.url.searchParams.get("state");
+
+        try {
+            const res = await fetch(BASE_PATH + "/auth/discord?code=" + code + "&state=" + state, {
+                method: "GET",
+            })
+
+            const json = await res.json();
+
+            if(json.success) {
+                localStorage.setItem("token", json.session.identifier);
+                localStorage.setItem("avatar", json.session.user.avatarUrl);
+                localStorage.setItem("name", json.session.user.name);
+                localStorage.setItem("id", json.session.user.id);
+                localStorage.setItem("discriminator", json.session.user.discriminator);
+
+                goto("/dash")
+            }
+            
+            message = json.message;
+
+        } catch (e) {
+            console.error(e);
+        }
+
         loading = false;
     })
 
@@ -16,10 +47,10 @@
     {#if loading}
     <h2>Loading..</h2>
 
-    {:else if correct}
-    <h2>Processing your request..</h2>
-    {:else}
+    {:else if !correct}
     <h2>Invalid request.</h2>
+    {:else}
+    <h2>{message}</h2>
     {/if}
 </div>
 

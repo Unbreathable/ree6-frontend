@@ -1,28 +1,14 @@
 <script lang="ts">
     import { fade, scale } from "svelte/transition";
 
-
-    let channels = [
-        {
-            name: 'general',
-            id: '123'
-        },
-        {
-            name: 'test-channel',
-            id: '1234'
-        },
-        {
-            name: 'support',
-            id: '12345'
-        }
-    ]
+    let roles = ["Guest", "Member", "Moderator", "Administrator", "Owner"]
 
     export let current: string;
     export let message: string;
-    export let callback: (id: string, channel: string) => void;
+    export let callback: (role: string) => void;
 
     function close() {
-        callback(current, '');
+        callback(current);
     }
 
 </script>
@@ -37,11 +23,11 @@
 
         <div class="content">
             <div class="channels">
-                {#each channels as channel}
-                <div on:click={() => callback(channel.id, channel.name)} on:keydown 
-                    class="channel clickable {current == channel.name ? 'selected' : ''}">
-                    <span class="material-icons icon-primary icon-small">tag</span>
-                    <div class="name">{channel.name}</div>
+                {#each roles as role}
+                <div on:click={() => callback(role)} on:keydown 
+                    class="channel clickable {current == role ? 'selected' : ''}">
+                    <span class="material-icons icon-primary icon-small">military_tech</span>
+                    <div class="name">{role}</div>
                 </div>
                 {/each}
             </div>

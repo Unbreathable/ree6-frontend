@@ -1,6 +1,12 @@
 <script lang="ts">
+    import { onMount } from "svelte";
 
-  import Sidebar from "./sidebar.svelte";
+    import Sidebar from "./sidebar.svelte";
+    import { loadServers } from "$lib/scripts/servers";
+
+    onMount(() => {
+        loadServers()
+    })
 
 </script>
 <div class="body">
