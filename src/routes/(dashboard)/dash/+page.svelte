@@ -1,12 +1,13 @@
 <script lang="ts">
-    import { servers, serversLoading } from "$lib/scripts/servers";
+    import LoadingIndicator from "$lib/components/loadingIndicator.svelte";
+import { servers, serversLoading } from "$lib/scripts/servers";
 
 
     
 
 </script>
 
-<h1 class="headline-top">Servers</h1>
+<h1 class="headline-top">Pick a server to configure </h1>
 
 <div class="servers">
 
@@ -35,6 +36,12 @@
     </div>
     {/each}
 
+    {:else}
+
+    <div class="center">
+        <LoadingIndicator size="100"/>
+    </div>
+
     {/if}
 </div>
 
@@ -50,6 +57,7 @@
     .servers {
         display: flex;
         flex-wrap: wrap;
+        justify-content: center;
         gap: 3rem;
 
         .server {

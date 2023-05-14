@@ -1,6 +1,10 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import { page } from "$app/stores";
+    import LoadingIndicator from "$lib/components/loadingIndicator.svelte";
+    import { get } from "$lib/scripts/constants";
+    import { currentServer } from "$lib/scripts/servers";
+    import { onDestroy } from "svelte";
 
     let actions = [
         {
@@ -29,14 +33,43 @@
         }
     ]
 
+    let loading = true;
+    let error = false;
+
+    let sub = currentServer.subscribe(async (server) => {
+        if(server.id == 0) return;
+
+        const res = await get("/guilds/" + server.id)
+        if(res.status != 200) {
+            error = true;
+            return;
+        }
+
+        const json = await res.json()
+
+        if(!json.success) {
+            error = true;
+            return;
+        }
+
+        console.log(json)
+        loading = false;
+    })
+
+    onDestroy(() => {
+        sub()
+    })
+
 </script>
 
 <div class="middle">
     <div class="server-profile">
-        <span class="material-icons icon-primary">face</span>
-        <h1>REE6 Community</h1>
+        <img class="profile-img" src={$currentServer.icon ?? "hi"} alt="hi" />
+        <h1>{$currentServer.name}</h1>
     </div>
     
+
+    {#if !loading}
     <div class="stats">
         <div class="stat">
             <span class="material-icons icon-primary icon-medium">group</span>
@@ -55,6 +88,9 @@
         </div>
         {/each}
     </div>
+    {:else}
+    <LoadingIndicator size="50" error={error} />
+    {/if}
 </div>
 
 <h2 class="headline">Bot settings</h2>
@@ -80,6 +116,12 @@
 </div>
 
 <style lang="scss">
+
+    .profile-img {
+        border-radius: 20rem;
+        width: 7vw;
+        aspect-ratio: 1/1;
+    }
 
     .middle {
         display: flex;

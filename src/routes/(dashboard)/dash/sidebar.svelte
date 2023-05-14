@@ -1,15 +1,14 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
+    import LoadingIndicator from "$lib/components/loadingIndicator.svelte";
+    import { servers, serversLoading, currentServer, type Server } from "$lib/scripts/servers";
   import { onMount } from "svelte";
-    import { slide } from "svelte/transition";
+    import { fade, slide } from "svelte/transition";
 
     let expanded = false;
 
-    let server = "";
-
     onMount(() => {
-        server = $page.params["serverId"] ?? "Select a server..";
         console.log($page.url.pathname)
     })
 
@@ -41,24 +40,9 @@
         },
     ];
 
-    let servers = [
-         {
-            id: 1,
-            name: "REE6 Community",
-        },
-        {
-            id: 2,
-            name: "Azura",
-        },
-        {
-            id: 3,
-            name: "NoRules",
-        }
-    ]
-
-    function selectServer(serverId: number) {
-        goto("/dash/" + serverId + "/stats")
-        server = "" + serverId;
+    function selectServer(server: Server) {
+        goto("/dash/" + server.id + "/stats")
+        currentServer.set(server)
         expanded = false;
     }
 
@@ -70,12 +54,19 @@
             goto("/dash")
         }} on:keydown class="material-icons icon-large icon-primary middle clickable">face</span>
         <div class="server-current">
+
+            {#if !$serversLoading}
             <div class="up" on:click={() => {
                 expanded = !expanded;
             }} on:keydown>
                 <div class="title">
-                    <span class="material-icons icon-medium icon-primary">{server == "Select a server.." ? "ads_click" : "dns"}</span>
-                    <p class="server-current-name text-medium">{server}</p>
+                    {#if $currentServer.id == 0}
+                    <span class="material-icons icon-medium icon-primary">ads_click</span>
+                    <p class="server-current-name text-medium">Select a server..</p>
+                    {:else}
+                    <img src="{$currentServer.icon}" class="material-icons img-small" alt="hi">
+                    <p class="server-current-name text-medium">{$currentServer.name}</p>
+                    {/if}
                 </div>
     
                 <span class="material-icons icon-medium expand {expanded ? "expand-rotated" : ""}">expand_more</span>
@@ -83,23 +74,29 @@
 
             {#if expanded}
             <div in:slide out:slide class="list">
-                {#each servers as server}
-                <div class="server" on:click={() => selectServer(server.id)} on:keydown>
-                    <span class="material-icons icon-medium icon-primary">dns</span>
+                {#each Array.from(servers.values()) as server}
+                <div class="server" on:click={() => selectServer(server)} on:keydown>
+                    <img src="{server.icon}" class="material-icons img-small" alt="hi">
                     <p class="server-name text-medium">{server.name}</p>
                 </div>
                 {/each}
             </div>
             {/if}
+        
+            {:else}
+
+            <LoadingIndicator size="30" />
+    
+            {/if}
         </div>
     </div>
 
-    {#if $page.url.pathname.startsWith("/dash/" + server)}
+    {#if $currentServer.id != 0 && $page.url.pathname.startsWith("/dash/" + $currentServer.id)}
     <div class="element-list">
 
         {#each elements as element}
-        <div class="element {$page.url.pathname.startsWith("/dash/" + server + element.link) ? "element-selected" : ""}" on:click={() => {
-            goto("/dash/" + server + element.link)
+        <div in:fade class="element {$page.url.pathname.startsWith("/dash/" + $currentServer.id + element.link) ? "element-selected" : ""}" on:click={() => {
+            goto("/dash/" + $currentServer.id + element.link)
         }} on:keydown>
             <span class="material-icons icon-medium icon-primary">{element.icon}</span>
             <p class="text-medium">{element.name}</p>
@@ -115,6 +112,11 @@
         width: 100%;
         height: 100%;
         max-width: 350px;
+    }
+
+    .img-small {
+        width: 32px;
+        border-radius: 1rem;
     }
 
     .server-selector {

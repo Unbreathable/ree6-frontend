@@ -1,7 +1,7 @@
 import { writable } from "svelte/store";
 import { get } from "./constants";
 
-interface Server {
+export interface Server {
     icon: string;
     name: string;
     setup: boolean;
@@ -9,6 +9,13 @@ interface Server {
 }
 
 export let serversLoading = writable(true);
+export let serverError = writable(false);
+export let currentServer = writable<Server>({
+    icon: "",
+    name: "",
+    setup: false,
+    id: 0
+});
 export let servers: Map<string, Server> = new Map<string, Server>();
 
 export function server(name: string): Server {
