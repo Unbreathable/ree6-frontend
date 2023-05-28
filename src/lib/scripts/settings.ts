@@ -1,16 +1,75 @@
 import { writable, type Writable } from "svelte/store";
+import { get } from "./constants";
 
-let settings: Map<string, Writable<string>> = new Map<string, Writable<string>>();
+export type Setting = {
+    name: string,
+    displayName: string,
+    value: Writable<string>
+}
 
-export function setting(name: string): Writable<string> {
+export let settingsLoading = writable(true);
+let settings: Map<string, Setting> = new Map<string, Setting>();
+
+export function createSetting(name: string, displayName: string, value: string) {
+
+    if(settings.has(name)) {
+        let setting = settings.get(name)!;
+        setting.displayName = displayName;
+        setting.value.set(value);
+
+        settings.set(name, setting)
+        return;
+    }
+
+    settings.set(name, {
+        name: name,
+        displayName: displayName,
+        value: writable(value)
+    });
+}
+
+export function setting(name: string): Setting {
 
     if (!settings.has(name)) {
-        settings.set(name, writable(":loading"));
+        settings.set(name, {
+            name: name,
+            displayName: name,
+            value: writable(":loading")
+        });
     }
 
     return settings.get(name)!;
 }
 
-export function loadSettings() {
+export function allSettings(prefix: string): Map<string, Setting> {
+
+    const map = new Map<string, Setting>();
+
+    settings.forEach((value, key) => {
+        if (key.startsWith(prefix)) {
+            map.set(key, value);
+        }
+    });
+
+    return map;
+}
+
+export async function loadSettings(guild: string) {
+    settingsLoading.set(true);
+
+    const res = await get("/settings/" + guild + "/");
+
+    if (res.status != 200) {
+        return;
+    }
+
+    const data = await res.json();
+    console.log(data);
+    const objects: any[] = data.object;
     
+    objects.forEach((obj) => {
+        createSetting(obj.name, obj.displayName, obj.value)
+    });
+
+    settingsLoading.set(false);
 }

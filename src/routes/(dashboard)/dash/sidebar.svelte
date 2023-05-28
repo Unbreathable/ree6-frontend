@@ -41,6 +41,14 @@
     ];
 
     function selectServer(server: Server) {
+
+        if(!server.setup) {
+            goto("/");
+            currentServer.set(server)
+            expanded = false;
+            return;
+        }
+
         goto("/dash/" + server.id + "/stats")
         currentServer.set(server)
         expanded = false;

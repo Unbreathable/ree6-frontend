@@ -1,9 +1,13 @@
 <script lang="ts">
+    import { goto } from "$app/navigation";
     import LoadingIndicator from "$lib/components/loadingIndicator.svelte";
-import { servers, serversLoading } from "$lib/scripts/servers";
+    import { servers, serversLoading, type Server, currentServer } from "$lib/scripts/servers";
 
 
-    
+    function selectServer(server: Server) {
+        goto("/dash/" + server.id + "/stats")
+        currentServer.set(server)
+    }
 
 </script>
 
@@ -20,7 +24,7 @@ import { servers, serversLoading } from "$lib/scripts/servers";
 
         {#if server.setup}
 
-        <div class="button clickable">
+        <div on:click={() => selectServer(server)} on:keydown class="button clickable">
             <span class="material-icons icon-primary">edit</span>
             <p>Manage</p>
         </div>

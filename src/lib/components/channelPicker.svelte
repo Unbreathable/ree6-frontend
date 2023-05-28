@@ -1,28 +1,24 @@
 <script lang="ts">
+    import { currentChannels, type Channel } from "$lib/scripts/servers";
+    import { onDestroy, onMount } from "svelte";
     import { fade, scale } from "svelte/transition";
 
-
-    let channels = [
-        {
-            name: 'general',
-            id: '123'
-        },
-        {
-            name: 'test-channel',
-            id: '1234'
-        },
-        {
-            name: 'support',
-            id: '12345'
+    let channels: Channel[] = []
+    let sub = currentChannels.subscribe((entities) => {
+        for(let entity of entities) {
+            if(entity.type != "TEXT") continue;
+            channels.push(entity);
         }
-    ]
+    })
 
-    export let current: string;
+    onDestroy(() => sub());
+
+    export let current: Channel;
     export let message: string;
-    export let callback: (id: string, channel: string) => void;
+    export let callback: (id: Channel) => void;
 
     function close() {
-        callback(current, '');
+        callback(current);
     }
 
 </script>
@@ -38,12 +34,21 @@
         <div class="content">
             <div class="channels">
                 {#each channels as channel}
-                <div on:click={() => callback(channel.id, channel.name)} on:keydown 
-                    class="channel clickable {current == channel.name ? 'selected' : ''}">
+                <div on:click={() => callback(channel)} on:keydown 
+                    class="channel clickable {current.id == channel.id ? 'selected' : ''}">
                     <span class="material-icons icon-primary icon-small">tag</span>
                     <div class="name">{channel.name}</div>
                 </div>
                 {/each}
+                <div on:click={() => callback({
+                    id: "-1",
+                    name: "hi",
+                    type: "TEXT"
+                })} on:keydown 
+                    class="channel clickable {current.id == null ? 'selected' : ''}">
+                    <span class="material-icons icon-primary icon-small">close</span>
+                    <div class="name">None</div>
+                </div>
             </div>
         </div>
     </div>

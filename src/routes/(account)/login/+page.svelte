@@ -23,11 +23,11 @@
             const json = await res.json();
 
             if(json.success) {
-                localStorage.setItem("token", json.session.identifier);
-                localStorage.setItem("avatar", json.session.user.avatarUrl);
-                localStorage.setItem("name", json.session.user.name);
-                localStorage.setItem("id", json.session.user.id);
-                localStorage.setItem("discriminator", json.session.user.discriminator);
+                localStorage.setItem("token", json.object.identifier);
+                localStorage.setItem("avatar", json.object.user.avatarUrl);
+                localStorage.setItem("name", json.object.user.name);
+                localStorage.setItem("id", json.object.user.id);
+                localStorage.setItem("discriminator", json.object.user.discriminator);
 
                 goto("/dash")
             }

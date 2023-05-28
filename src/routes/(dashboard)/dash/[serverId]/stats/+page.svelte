@@ -3,7 +3,7 @@
     import { page } from "$app/stores";
     import LoadingIndicator from "$lib/components/loadingIndicator.svelte";
     import { get } from "$lib/scripts/constants";
-    import { currentServer } from "$lib/scripts/servers";
+    import { currentServer, currentError, currentLoading, currentChannels, currentRoles } from "$lib/scripts/servers";
     import { onDestroy } from "svelte";
 
     let actions = [
@@ -33,33 +33,6 @@
         }
     ]
 
-    let loading = true;
-    let error = false;
-
-    let sub = currentServer.subscribe(async (server) => {
-        if(server.id == 0) return;
-
-        const res = await get("/guilds/" + server.id)
-        if(res.status != 200) {
-            error = true;
-            return;
-        }
-
-        const json = await res.json()
-
-        if(!json.success) {
-            error = true;
-            return;
-        }
-
-        console.log(json)
-        loading = false;
-    })
-
-    onDestroy(() => {
-        sub()
-    })
-
 </script>
 
 <div class="middle">
@@ -69,16 +42,16 @@
     </div>
     
 
-    {#if !loading}
+    {#if !$currentLoading}
     <div class="stats">
         <div class="stat">
-            <span class="material-icons icon-primary icon-medium">group</span>
-            <p class="text-medium">300 server members</p>
+            <span class="material-icons icon-primary icon-medium">tag</span>
+            <p class="text-medium">{$currentChannels.length} channels or categories</p>
         </div>
     
         <div class="stat">
-            <span class="material-icons icon-primary icon-medium">key</span>
-            <p class="text-medium">100 server invites</p>
+            <span class="material-icons icon-primary icon-medium">military_tech</span>
+            <p class="text-medium">{$currentRoles.length} roles</p>
         </div>
     
         {#each [1,2] as command}
@@ -89,7 +62,7 @@
         {/each}
     </div>
     {:else}
-    <LoadingIndicator size="50" error={error} />
+    <LoadingIndicator size="50" error={$currentError} />
     {/if}
 </div>
 
@@ -159,7 +132,7 @@
 
         .stat {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.3rem;
             align-items: center;
             padding: 0.6rem;
             border-radius: 1rem;
