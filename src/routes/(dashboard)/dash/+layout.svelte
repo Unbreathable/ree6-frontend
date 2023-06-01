@@ -56,6 +56,6 @@
     .content {
         width: 100%;
         height: calc(100% - 4rem);
-        padding: 2rem;
+        padding: 0rem 2rem;
     }
 </style>

@@ -1,11 +1,10 @@
 <script lang="ts">
+    import { currentRoles, type Role } from "$lib/scripts/servers";
     import { fade, scale } from "svelte/transition";
 
-    let roles = ["Guest", "Member", "Moderator", "Administrator", "Owner"]
-
-    export let current: string;
+    export let current: Role | null;
     export let message: string;
-    export let callback: (role: string) => void;
+    export let callback: (role: Role | null) => void;
 
     function close() {
         callback(current);
@@ -23,11 +22,11 @@
 
         <div class="content">
             <div class="channels">
-                {#each roles as role}
+                {#each $currentRoles as role}
                 <div on:click={() => callback(role)} on:keydown 
                     class="channel clickable {current == role ? 'selected' : ''}">
-                    <span class="material-icons icon-primary icon-small">military_tech</span>
-                    <div class="name">{role}</div>
+                    <span class="material-icons icon-small" style={"color: #" + role.color.toString(16) + ";"}>military_tech</span>
+                    <div class="name">{role.name}</div>
                 </div>
                 {/each}
             </div>

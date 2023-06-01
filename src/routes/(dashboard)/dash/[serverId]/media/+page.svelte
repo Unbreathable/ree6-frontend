@@ -1,4 +1,4 @@
-<h1 class="headline-top">Social media</h1>
+<h1 class="headline">Social media</h1>
 
 <div class="box">
     <div class="box-title">

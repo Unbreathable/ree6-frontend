@@ -16,7 +16,8 @@ export function post(path: string, body: string) {
         method: "POST",
         body: body,
         headers: {
-            'X-Session-Authenticator': localStorage.getItem("token")!
+            'X-Session-Authenticator': localStorage.getItem("token")!,
+            "Content-Type": "application/json"
         },
     })
 }
@@ -28,7 +29,8 @@ export async function post_js(path: string, body: string) {
         method: "POST",
         body: body,
         headers: {
-            'X-Session-Authenticator': localStorage.getItem("token")!
+            'X-Session-Authenticator': localStorage.getItem("token")!,
+            "Content-Type": "application/json"
         },
     })
 

@@ -6,12 +6,14 @@
     import ChannelPicker from "../channelPicker.svelte";
 
     export let title: string;
+    export let windowTitle: string = "Select a channel.";
     export let icon: string;
     export let description: string;
     export let endpoint: string;
 
     let channelPicker = false;
     let loading = false;
+    let error = false;
     let current: Channel = {
         id: ":loading",
         name: "Loading...",
@@ -23,7 +25,9 @@
         
         // Request value
         const res = await get(endpoint)
+        console.log(endpoint)
         if(res.status != 200) {
+            error = true;
             return;
         }
 
@@ -31,6 +35,7 @@
         const json = await res.json()
         console.log(json)
         if(!json.success) {
+            error = true;
             return;
         }
 
@@ -41,12 +46,13 @@
         }
 
         loading = false;
+        error = false;
     })
 
 </script>
 
 {#if channelPicker}
-<ChannelPicker message="Select a channel for logs." callback={async (channel) => {    
+<ChannelPicker message={windowTitle} callback={async (channel) => {    
     channelPicker = false
     loading = true;
 
@@ -60,7 +66,7 @@
             }
             
             // Remove channel
-            await post_js(endpoint + "/remove", "")
+            await post_js(endpoint + "/remove", "{}")
         }
 
     } else {
@@ -68,7 +74,7 @@
 
         // Set channel
         await post_js(endpoint + "/add", JSON.stringify({
-            "channel": channel.id
+            "value": channel.id?.toString()
         }))
     }
 
@@ -88,7 +94,7 @@
 
         {#if loading}
         <div class="loading">
-            <LoadingIndicator size="45" />
+            <LoadingIndicator error={error} size="45" />
         </div>
         {:else}
         <div class="button-bar">

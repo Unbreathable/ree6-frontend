@@ -5,6 +5,7 @@
     import RolePicker from "$lib/components/rolePicker.svelte";
     import ChannelSelector from "$lib/components/settings/channelSelector.svelte";
     import MassBoolean from "$lib/components/settings/massBoolean.svelte";
+    import MassRoleSelector from "$lib/components/settings/massRoleSelector.svelte";
     import { currentServer } from "$lib/scripts/servers";
     import { setting } from "$lib/scripts/settings";
     import type { Writable } from "svelte/store";
@@ -38,7 +39,7 @@
 }} current="" />
 {/if}
 
-<h1 class="headline-top">Logging</h1>
+<h1 class="headline">Logging</h1>
 
 <ChannelSelector icon="tag" title="Logging channel" description="Select the channel for all log messages." endpoint={"/guilds/" + $page.params.serverId + "/log"} />
 
@@ -46,51 +47,13 @@
 
 <h1 class="headline">Join settings</h1>
 
-<div class="box default-margin">
-    <div class="box-title">
-        <div class="content">
-            <div class="title">
-                <span class="material-icons icon-primary icon-small">military_tech</span>
-                <h1 class="text-medium">Automatic roles</h1>
-            </div>
-            <p class="text-bg">Configure all roles that should be given to users when joining the guild.</p>
-        </div>
+<MassRoleSelector title="Automatic roles" description="Configure all roles that should be given to users when joining the guild." icon="military_tech"
+    endpoint={"/guilds/" + $page.params.serverId + "/autorole"}  />
 
-        <div class="loading">
-            <LoadingIndicator size="45" />
-        </div>
-        <div class="button-bar">
-            <div on:keydown class="button icon-button">
-                <span class="material-icons icon-small icon-primary">add</span>
-            </div>
-        </div>
-    </div>
+<div class="default-margin"></div>
 
-    <div class="chips default-margin">
-        {#each (autoRoles).split(",") as role}
-        <div class="chip">
-            <p class="text-small">{role}</p>
-            <span on:click={() => {
-                let roles = autoRoles.split(",").filter(r => r != role)
-                autoRoles = roles.join(",")
-            }} on:keydown class="material-icons icon-primary clickable chip-button">close</span>
-        </div>
-        {/each}
-    </div>
-</div>
+<ChannelSelector icon="rocket_launch" title="Welcome channel" description="Select the channel for welcoming people." endpoint={"/guilds/" + $page.params.serverId + "/welcome"} />
 
-<div class="box default-margin">
-    <div class="box-title">
-        <div class="content">
-            <div class="title">
-                <span class="material-icons icon-primary icon-small">tag</span>
-                <h1 class="text-medium">Welcome channel</h1>
-            </div>
-            <p class="text-bg">Select the channel for all welcome messages.</p>
-        </div>
-        <span class="material-icons icon-large clickable">edit</span>
-    </div>
-</div>
 
 <div class="box default-margin">
     <div class="box-title">

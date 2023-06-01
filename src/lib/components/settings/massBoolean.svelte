@@ -54,7 +54,9 @@
         const newValue = features.get(feature)?.value == "true" ? "false" : "true";
 
         // Send to server
-        const res = await post("/settings/" + $currentServer.id + "/" + feature + "/update", newValue)
+        const res = await post("/settings/" + $currentServer.id + "/" + feature + "/update", JSON.stringify({
+            'value': newValue
+        }))
 
         if(res.status != 200) {
             loading = false;

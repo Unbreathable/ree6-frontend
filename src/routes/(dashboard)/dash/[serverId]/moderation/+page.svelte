@@ -41,7 +41,7 @@
 
 </script>
 
-<h1 class="headline-top">Moderation settings</h1>
+<h1 class="headline">Moderation settings</h1>
 
 <div class="box default-margin">
     <div class="box-title">
