@@ -1,43 +1,11 @@
 <script lang="ts">
     import { page } from "$app/stores";
-    import ChannelPicker from "$lib/components/channelPicker.svelte";
-    import LoadingIndicator from "$lib/components/loadingIndicator.svelte";
-    import RolePicker from "$lib/components/rolePicker.svelte";
     import ChannelSelector from "$lib/components/settings/channelSelector.svelte";
     import MassBoolean from "$lib/components/settings/massBoolean.svelte";
     import MassRoleSelector from "$lib/components/settings/massRoleSelector.svelte";
-    import { currentServer } from "$lib/scripts/servers";
-    import { setting } from "$lib/scripts/settings";
-    import type { Writable } from "svelte/store";
-
-    // Channels
-    let channelPicker = false;
-    let pickerMessage = ""
-    let currentSetting: Writable<string>;
-
-    let loggingChannel = setting("loggingChannel")
-    let loggingChannelStore = loggingChannel.value;
-    let welcomeChannel = setting("welcomeChannel")
-
-    // Roles
-    let rolePicker = false;
-    let rolePickerMessage = ""
-
-    let autoRoles = "Guest"
+    import MessageSelector from "$lib/components/settings/messageSelector.svelte";
 
 </script>
-
-{#if rolePicker}
-<RolePicker message={rolePickerMessage} callback={(name) => {
-    rolePicker = false
-    if(name == "") return;
-    //if($autoRoles.includes(name)) return;
-
-    // Add new role
-    //if($autoRoles == "") autoRoles.set(name)
-    //else autoRoles.set($autoRoles + "," + name)
-}} current="" />
-{/if}
 
 <h1 class="headline">Logging</h1>
 
@@ -54,20 +22,10 @@
 
 <ChannelSelector icon="rocket_launch" title="Welcome channel" description="Select the channel for welcoming people." endpoint={"/guilds/" + $page.params.serverId + "/welcome"} />
 
+<div class="default-margin"></div>
 
-<div class="box default-margin">
-    <div class="box-title">
-        <div class="content">
-            <div class="title">
-                <span class="material-icons icon-primary icon-small">mail</span>
-                <h1 class="text-medium">Welcome message</h1>
-            </div>
-            <p class="text-bg">Configure the welcome message.</p>
-        </div>
-        <span class="material-icons icon-large clickable">edit</span>
-    </div>
-</div>
-
+<MessageSelector icon="mail" title="Welcome message" description="Configure the welcome message." settingName="message_join" 
+formattingDirectives="%guild_name% - Name of the guild %nl %user_mention% - @<username> to mention the user"/>
 
 <style lang="scss">
     @import '$lib/default.scss';

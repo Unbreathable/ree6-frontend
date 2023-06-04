@@ -1,5 +1,5 @@
 import { writable, type Writable } from "svelte/store";
-import { get } from "./constants";
+import { get, post_js } from "./constants";
 
 export type Setting = {
     name: string,
@@ -41,6 +41,26 @@ export function setting(name: string): Setting {
     return settings.get(name)!;
 }
 
+export async function updateSetting(name: string, guild: string, value: string) {
+    if(value === ":loading") {
+        return;
+    }
+
+    const setting = settings.get(name)!;
+    setting.value.set(":loading")
+
+    const json = await post_js("/settings/" + guild + "/" + name + "/update", JSON.stringify({
+        "value": value
+    }))
+
+    if(!json.success) {
+        return;
+    }
+
+    setting.value.set(value);
+    settings.set(name, setting);
+}
+
 export function allSettings(prefix: string): Map<string, Setting> {
 
     const map = new Map<string, Setting>();
@@ -57,7 +77,7 @@ export function allSettings(prefix: string): Map<string, Setting> {
 export async function loadSettings(guild: string) {
     settingsLoading.set(true);
 
-    const res = await get("/settings/" + guild + "/");
+    const res = await get("/settings/"  + guild + "/");
 
     if (res.status != 200) {
         return;
