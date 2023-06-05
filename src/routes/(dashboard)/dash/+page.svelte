@@ -11,7 +11,7 @@
 
 </script>
 
-<h1 class="headline-top">Pick a server to configure </h1>
+<h1 class="headline">Pick a server to configure </h1>
 
 <div class="servers">
 
